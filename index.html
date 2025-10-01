@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edo - Digital Card</title>
+  
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- QRious library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
+</head>
+<body>
+
+  <!-- Background Animation -->
+  <div class="background">
+    <div class="wave wave1"></div>
+    <div class="wave wave2"></div>
+    <div class="wave wave3"></div>
+  </div>
+
+  <!-- Main Card -->
+  <div class="card">
+    <img src="assets/logo.png" alt="Logo" class="logo">
+    <img src="assets/profile.jpg" alt="Edward Puo" class="profile-pic">
+    <h1>Edora 7o5</h1>
+    <h2>Digital Marketing | Web Developer</h2>
+
+    <!-- Socials -->
+<div class="socials">
+  <a href="https://wa.me/231555878633" target="_blank"><i class="fab fa-whatsapp"></i></a>
+  <a href="https://www.tiktok.com/@yourusername" target="_blank"><i class="fab fa-tiktok"></i></a>
+  <a href="https://facebook.com/yourusername" target="_blank"><i class="fab fa-facebook"></i></a>
+  <a href="https://github.com/edora7" target="_blank"><i class="fab fa-github"></i></a>
+  <a href="https://www.youtube.com/@YourChannelName" target="_blank"><i class="fab fa-youtube"></i></a>
+</div>
+
+
+    <!-- QR Code -->
+    <canvas id="qrcode"></canvas>
+
+    <!-- To-Do List -->
+    <div class="todo-section">
+      <h3>📝 My To-Do List</h3>
+      <div class="todo-input">
+        <input type="text" id="taskInput" placeholder="Enter a task...">
+        <button id="addTask"><i class="fas fa-plus"></i></button>
+      </div>
+      <ul id="taskList"></ul>
+    </div>
+
+    <footer class="card-footer">
+      © Edora TechCraft Soluction (ETS)
+    </footer>
+  </div>
+
+  <!-- AI Chat Box -->
+  <div class="chat-wrapper">
+    <button class="chat-btn" id="chatBtn"><i class="fas fa-comment-dots"></i></button>
+
+    <div class="chat-box" id="chatBox">
+      <div class="chat-header">
+        <h4>Ask Me Anything 🤖</h4>
+        <button id="closeChat">&times;</button>
+      </div>
+      <div class="chat-body" id="chatBody">
+        <p class="bot">Hello! I’m your digital assistant 🤖. Ask me anything!</p>
+      </div>
+      <div class="chat-footer">
+        <input type="text" id="chatInput" placeholder="Type or speak your question...">
+        <button id="voiceBtn"><i class="fas fa-microphone"></i></button>
+        <button id="sendChat"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>
