@@ -3,82 +3,386 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edo - Digital Card</title>
-  
-  <!-- FontAwesome for icons -->
+  <title>RIA Aviation Platform - Secure Operations Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css">
-
-  <!-- QRious library -->
-  <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
 </head>
 <body>
-
-  <!-- Background Animation -->
-  <div class="background">
-    <div class="wave wave1"></div>
-    <div class="wave wave2"></div>
-    <div class="wave wave3"></div>
-  </div>
-
-  <!-- Main Card -->
-  <div class="card">
-    <img src="assets/logo.png" alt="Logo" class="logo">
-    <img src="assets/profile.jpg" alt="Edward Puo" class="profile-pic">
-    <h1>Edora 7o5</h1>
-    <h2>Digital Marketing | Web Developer</h2>
-
-    <!-- Socials -->
-<div class="socials">
-  <a href="https://wa.me/231555878633" target="_blank"><i class="fab fa-whatsapp"></i></a>
-  <a href="https://www.tiktok.com/@yourusername" target="_blank"><i class="fab fa-tiktok"></i></a>
-  <a href="https://facebook.com/yourusername" target="_blank"><i class="fab fa-facebook"></i></a>
-  <a href="https://github.com/edora7" target="_blank"><i class="fab fa-github"></i></a>
-  <a href="https://www.youtube.com/@YourChannelName" target="_blank"><i class="fab fa-youtube"></i></a>
-</div>
-
-
-    <!-- QR Code -->
-    <canvas id="qrcode"></canvas>
-
-    <!-- To-Do List -->
-    <div class="todo-section">
-      <h3>📝 My To-Do List</h3>
-      <div class="todo-input">
-        <input type="text" id="taskInput" placeholder="Enter a task...">
-        <button id="addTask"><i class="fas fa-plus"></i></button>
+  <div class="ambient"></div>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <img src="assets/logo.png" alt="RIA logo">
+          <div class="brand-text">
+            <span>RIA Aviation</span>
+            <small>Government Operations</small>
+          </div>
+        </div>
+        <button class="icon-btn" id="sidebarToggle" aria-label="Toggle sidebar">
+          <i class="fas fa-bars"></i>
+        </button>
       </div>
-      <ul id="taskList"></ul>
+
+      <div class="portal-switcher" role="tablist" aria-label="Department portals">
+        <button class="portal-btn active" data-portal="hr" role="tab" aria-selected="true">
+          <span class="portal-icon">HR</span>
+          <span class="portal-text">HR Portal</span>
+        </button>
+        <button class="portal-btn" data-portal="ops" role="tab" aria-selected="false">
+          <span class="portal-icon">OP</span>
+          <span class="portal-text">Operations</span>
+        </button>
+        <button class="portal-btn" data-portal="sec" role="tab" aria-selected="false">
+          <span class="portal-icon">SC</span>
+          <span class="portal-text">Security</span>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebarNav" aria-label="Primary navigation">
+        <a class="nav-item active" href="#">
+          <i class="fas fa-chart-line"></i>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a class="nav-item" href="#">
+          <i class="fas fa-users"></i>
+          <span class="nav-text">Staff Registry</span>
+        </a>
+        <a class="nav-item" href="#">
+          <i class="fas fa-user-check"></i>
+          <span class="nav-text">Onboarding</span>
+        </a>
+        <a class="nav-item" href="#">
+          <i class="fas fa-graduation-cap"></i>
+          <span class="nav-text">Training</span>
+        </a>
+        <a class="nav-item" href="#">
+          <i class="fas fa-shield"></i>
+          <span class="nav-text">Compliance</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="status-pill">
+          <span class="dot live"></span>
+          <span>Zero-Trust Enforcement</span>
+        </div>
+        <div class="status-pill subtle">
+          <span class="dot"></span>
+          <span>IT SuperAdmin Control</span>
+        </div>
+      </div>
+    </aside>
+
+    <div class="content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="page-title">
+            <h1>RIA Aviation Platform</h1>
+            <span>Secure Operations Console</span>
+          </div>
+        </div>
+        <div class="topbar-center">
+          <div class="search">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search aircraft, staff, audits...">
+          </div>
+        </div>
+        <div class="topbar-right">
+          <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
+            <i class="fas fa-moon"></i>
+          </button>
+          <button class="icon-btn notification" id="notificationBtn" aria-label="Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="pulse"></span>
+          </button>
+          <div class="user-menu">
+            <button class="user-btn" id="userMenuBtn" aria-haspopup="true" aria-expanded="false">
+              <img src="assets/profile.jpg" alt="User avatar">
+              <span class="user-name">IT SuperAdmin</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown" id="userDropdown" role="menu">
+              <a href="#" role="menuitem">Profile</a>
+              <a href="#" role="menuitem">Access Tokens</a>
+              <a href="#" role="menuitem">Security Logs</a>
+              <div class="dropdown-divider"></div>
+              <a href="#" role="menuitem">Sign out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="main">
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Advanced Architecture & Security Model</p>
+            <h2>Government Aviation Management System for Roberts International Airport</h2>
+            <p>
+              Premium UI aligned with zero-trust enforcement, department-isolated portals,
+              and a multi-factor identity model built for high-assurance aviation operations.
+            </p>
+            <div class="hero-actions">
+              <button class="primary-btn">Create Secure Session</button>
+              <button class="ghost-btn">View Audit Trail</button>
+            </div>
+          </div>
+          <div class="hero-metrics">
+            <div class="mini-card">
+              <span class="mini-label">Portal</span>
+              <span class="mini-value" id="portalName">HR Portal</span>
+            </div>
+            <div class="mini-card">
+              <span class="mini-label">3FA Status</span>
+              <span class="mini-value accent">Enabled</span>
+            </div>
+            <div class="mini-card">
+              <span class="mini-label">Account Lockout</span>
+              <span class="mini-value">3-strike enforcement</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="stats-grid">
+          <div class="card stat-card" data-stat="activeFlights">
+            <div class="stat-head">
+              <span>Active Flights</span>
+              <span class="badge live">Live</span>
+            </div>
+            <div class="stat-value" id="statFlights">128</div>
+            <div class="stat-foot">
+              WebSocket stream (simulated)
+              <span class="stat-updated" data-updated>Updated now</span>
+            </div>
+          </div>
+          <div class="card stat-card" data-stat="securityAlerts">
+            <div class="stat-head">
+              <span>Security Alerts</span>
+              <span class="badge danger">Critical</span>
+            </div>
+            <div class="stat-value" id="statAlerts">3</div>
+            <div class="stat-foot">
+              Zero-trust monitoring
+              <span class="stat-updated" data-updated>Updated now</span>
+            </div>
+          </div>
+          <div class="card stat-card" data-stat="staffOnline">
+            <div class="stat-head">
+              <span>Staff Online</span>
+              <span class="badge">Live</span>
+            </div>
+            <div class="stat-value" id="statStaff">342</div>
+            <div class="stat-foot">
+              3FA sessions verified
+              <span class="stat-updated" data-updated>Updated now</span>
+            </div>
+          </div>
+          <div class="card stat-card" data-stat="pipelineHealth">
+            <div class="stat-head">
+              <span>Snowflake Pipelines</span>
+              <span class="badge success">Healthy</span>
+            </div>
+            <div class="stat-value" id="statPipelines">24</div>
+            <div class="stat-foot">
+              Aviationstack + ADS-B ingest
+              <span class="stat-updated" data-updated>Updated now</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="grid two-col">
+          <div class="card">
+            <h3>Defensive Security Measures</h3>
+            <ul class="feature-list">
+              <li>3-Factor Authentication: system email, LAA-XXXX ID, password.</li>
+              <li>Account lockout after three failed attempts; is_active set to False.</li>
+              <li>Only IT SuperAdmin can re-enable locked accounts.</li>
+              <li>Zero-trust middleware and departmental isolation.</li>
+              <li>Continuous audit logging for every access event.</li>
+            </ul>
+            <div class="highlight">
+              <div>
+                <strong>System-generated identity only.</strong>
+                <p>Employees cannot self-register. IT provisions accounts and assigns email.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>3FA Access Gate (Demo)</h3>
+            <form id="loginForm" class="login-form">
+              <label>
+                Official Email
+                <input type="email" id="emailInput" placeholder="firstname.lastname@ria.gov.lr" required>
+              </label>
+              <label>
+                Employee ID
+                <input type="text" id="employeeIdInput" placeholder="LAA-XXXX" required>
+              </label>
+              <label>
+                Password
+                <input type="password" id="passwordInput" placeholder="********" required>
+              </label>
+              <div class="login-actions">
+                <button type="submit" class="primary-btn">Verify 3FA</button>
+                <button type="button" class="ghost-btn" id="unlockBtn">IT Admin Unlock</button>
+              </div>
+            </form>
+            <div class="login-status">
+              <div class="status-row">
+                Failed attempts: <span id="attemptCount">0</span>/3
+              </div>
+              <div class="status-row">
+                Account status: <span id="accountStatus" class="status ok">Active</span>
+              </div>
+              <div class="status-row">
+                is_active flag: <span id="isActiveFlag">True</span>
+              </div>
+              <div class="login-message" id="loginMessage">Demo credentials: it.admin@ria.gov.lr / LAA-0001 / Aviation#2026</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="grid two-col">
+          <div class="card">
+            <h3>RBAC Department Portals</h3>
+            <p class="muted">
+              Each department uses a dedicated portal with unique navigation, data access,
+              and a custom sidebar configuration to enforce least privilege.
+            </p>
+            <div class="portal-grid">
+              <div class="portal-card">
+                <h4>HR Portal</h4>
+                <p>Staff registry, onboarding approvals, training compliance.</p>
+              </div>
+              <div class="portal-card">
+                <h4>Operations Portal</h4>
+                <p>Flight coordination, gate management, runway readiness.</p>
+              </div>
+              <div class="portal-card">
+                <h4>Security Portal</h4>
+                <p>Threat monitoring, access control, incident response.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>System-Generated Identity</h3>
+            <p class="muted">
+              IT creates every user record. The system auto-generates a unique LAA-XXXX
+              identifier and @ria.gov.lr email. Registration is disabled.
+            </p>
+            <div class="identity-panel">
+              <div class="identity-row">
+                <span>Employee ID</span>
+                <strong id="identityId">LAA-3021</strong>
+              </div>
+              <div class="identity-row">
+                <span>Official Email</span>
+                <strong id="identityEmail">laa-3021@ria.gov.lr</strong>
+              </div>
+              <button class="ghost-btn" id="generateIdentity">Generate sample identity</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3>Advanced Repository Structure</h3>
+          <pre class="code-block">ria_aviation_platform/
+├── backend/ (Django - The Core)
+│   ├── core/                   # Settings, WSGI, Security Middleware
+│   ├── api/                    # REST API Endpoints
+│   ├── ai_assistant/           # "Siri-like" logic, TTS/STT, NLP
+│   ├── accounts/               # Custom User Model, 3FA, Lockout logic
+│   ├── departments/            # Module-based portals (HR, OPS, SEC)
+│   └── snowflake_connector/    # Data bridge to Snowflake
+├── frontend/ (Modern UI)
+│   ├── assets/                 # Premium Icons, CSS (Shadow styles)
+│   ├── components/             # Sidebar, Topbar, Premium Cards
+│   └── templates/              # Portal-specific views
+├── snowflake/ (Data Pipelines)
+│   ├── installer/              # Streamlit Installer (Overture Maps)
+│   ├── dashboard/              # Analytics Dashboard
+│   └── dbt/                    # Data transformation models
+├── .env                        # Secrets (Aviationstack, GitHub, Snowflake)
+├── docker-compose.yml          # Production deployment
+└── COMPREHENSIVE_README.md     # Technical Manual</pre>
+        </section>
+
+        <section class="card">
+          <div class="prompt-header">
+            <h3>Master Prompt for AI Agent</h3>
+            <button class="ghost-btn" id="copyPrompt">Copy prompt</button>
+          </div>
+          <textarea id="promptText" class="prompt-text" readonly>I am building a high-security Government Aviation Management System for Roberts International Airport (RIA).
+
+Tech Stack: Django (Backend), Snowflake (Data Warehouse), Tailwind CSS (Frontend), and a Python-based Voice/Text AI Assistant.
+
+Core Security Requirements:
+
+Implement a Custom User Model with 3-Factor Authentication: Official Email (system-generated), EmployeeID (system-generated LAA-XXXX), and Password.
+
+Disable user registration. Only the 'IT Department' role can create accounts.
+
+Implement a '3-Strikes' lockout: if login fails 3 times, block the account and log the event for IT review.
+
+Create a Zero-Trust middleware: Each department (HR, Operations, Security) must have its own secure module and unique portal UI.
+
+AI Assistant (Siri-style):
+
+Build an AI module called 'RIA-Voice' using Text-to-Speech (TTS) and Speech-to-Text (STT).
+
+The AI must allow employees to 'Contact' peers via internal messaging through voice commands.
+
+Strict AI Guardrails: NEVER expose employee personal info. Refer all account/technical issues to 'IT Admin'. Do not allow the AI to troubleshoot system-level errors.
+
+UI/UX Specs:
+
+Create a standalone, stylish sidebar (Microsoft Edge style) with a collapse/expand toggle.
+
+Build a Topbar with Notification & User icons with premium shadow effects.
+
+Implement a 'Live Preview' dashboard with animated cards showing real-time data from Snowflake.
+
+Include a high-end Dark/Light mode toggle.
+
+Snowflake Integration:
+
+Integrate 'Overture Maps - Base' for infrastructure visualization.
+
+Set up automated ingestion for 'Aviationstack API' and 'ADS-B' historical data.
+
+Begin by generating the Django User Model and the 3FA login logic.</textarea>
+          <div class="copy-status" id="copyStatus">Ready to copy.</div>
+        </section>
+
+        <section class="grid two-col">
+          <div class="card">
+            <h3>RIA-Voice AI Assistant Guardrails</h3>
+            <ul class="feature-list">
+              <li>Voice-to-text and text-to-speech for operational commands.</li>
+              <li>Internal messaging via vetted voice commands.</li>
+              <li>Never disclose personal employee information.</li>
+              <li>Route all account or technical issues to IT Admin.</li>
+              <li>Block system-level troubleshooting requests.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Snowflake & Data Pipeline Focus</h3>
+            <ul class="feature-list">
+              <li>Overture Maps base layer for infrastructure visualization.</li>
+              <li>Aviationstack and ADS-B automated ingestion.</li>
+              <li>Separated DBT transformation models.</li>
+              <li>Analytics dashboard with live preview tiles.</li>
+              <li>Governed data access for each department.</li>
+            </ul>
+          </div>
+        </section>
+      </main>
     </div>
-
-    <footer class="card-footer">
-      © Edora TechCraft Soluction (ETS)
-    </footer>
   </div>
 
-  <!-- AI Chat Box -->
-  <div class="chat-wrapper">
-    <button class="chat-btn" id="chatBtn"><i class="fas fa-comment-dots"></i></button>
-
-    <div class="chat-box" id="chatBox">
-      <div class="chat-header">
-        <h4>Ask Me Anything 🤖</h4>
-        <button id="closeChat">&times;</button>
-      </div>
-      <div class="chat-body" id="chatBody">
-        <p class="bot">Hello! I’m your digital assistant 🤖. Ask me anything!</p>
-      </div>
-      <div class="chat-footer">
-        <input type="text" id="chatInput" placeholder="Type or speak your question...">
-        <button id="voiceBtn"><i class="fas fa-microphone"></i></button>
-        <button id="sendChat"><i class="fas fa-paper-plane"></i></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Script -->
   <script src="script.js"></script>
 </body>
 </html>
