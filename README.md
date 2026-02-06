@@ -24,3 +24,7 @@ flows described in the specification.
 ## Run
 
 Open `index.html` in your browser. No build step required.
+
+## Technical manual
+
+See `COMPREHENSIVE_README.md` for the full architecture and security model.
