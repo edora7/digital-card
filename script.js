@@ -28,12 +28,42 @@ document.addEventListener("DOMContentLoaded", () => {
   const copyPromptBtn = document.getElementById("copyPrompt");
   const promptText = document.getElementById("promptText");
   const copyStatus = document.getElementById("copyStatus");
+  const securityLogEl = document.getElementById("securityLog");
+  const authLogEl = document.getElementById("authLog");
 
   const statTargets = [
     { id: "statFlights", min: 85, max: 180, jitter: 6 },
     { id: "statAlerts", min: 1, max: 9, jitter: 1 },
     { id: "statStaff", min: 280, max: 420, jitter: 8 },
     { id: "statPipelines", min: 18, max: 30, jitter: 2 }
+  ];
+
+  const securityEvents = [
+    {
+      title: "Perimeter scan complete",
+      detail: "All secure zones reporting nominal status.",
+      type: "success"
+    },
+    {
+      title: "Badge access denied",
+      detail: "Terminal A - Door 3 flagged for review.",
+      type: "warning"
+    },
+    {
+      title: "Threat intel update",
+      detail: "Inbound aviation advisory synced from partner feeds.",
+      type: "success"
+    },
+    {
+      title: "CCTV anomaly flagged",
+      detail: "Hangar 2 - automated review queued.",
+      type: "warning"
+    },
+    {
+      title: "Critical alert escalated",
+      detail: "Unauthorized access attempt quarantined.",
+      type: "danger"
+    }
   ];
 
   const portalConfig = {
@@ -171,6 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
     if (!isActive) {
       updateLoginStatus("Account locked. Only IT SuperAdmin can re-enable access.", "error");
+      addAuthLog("Login blocked - account inactive.", "danger");
       return;
     }
 
@@ -186,14 +217,20 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isValid) {
       attempts = 0;
       updateLoginStatus("3FA verified. Secure session established.", "success");
+      addAuthLog("3FA verification successful for IT SuperAdmin.", "success");
       loginForm.reset();
     } else {
       attempts += 1;
       if (attempts >= MAX_ATTEMPTS) {
         isActive = false;
         updateLoginStatus("3-strike lockout applied. Account is inactive.", "error");
+        addAuthLog("3-strike lockout enforced. Account disabled.", "danger");
       } else {
         updateLoginStatus("Invalid credentials. Attempts logged for IT review.", "error");
+        addAuthLog(
+          `Invalid 3FA attempt logged (${attempts}/${MAX_ATTEMPTS}).`,
+          "warning"
+        );
       }
     }
 
@@ -205,6 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
     isActive = true;
     persistAuthState();
     updateLoginStatus("Account re-enabled by IT SuperAdmin.", "success");
+    addAuthLog("Account re-enabled by IT SuperAdmin.", "success");
   }
 
   function generateIdentity() {
@@ -214,29 +252,112 @@ document.addEventListener("DOMContentLoaded", () => {
     identityEmailEl.textContent = `laa-${id}@ria.gov.lr`;
   }
 
-  function updateStats() {
-    const now = new Date();
-    const timeLabel = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    statTargets.forEach((stat) => {
-      const el = document.getElementById(stat.id);
-      if (!el) {
-        return;
+  function applyStatPayload(payload) {
+    if (!payload) {
+      return;
+    }
+    Object.entries(payload.stats).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = value;
       }
-      const currentValue = Number.parseInt(el.textContent, 10) || stat.min;
-      const delta = Math.floor(Math.random() * (stat.jitter * 2 + 1)) - stat.jitter;
-      let nextValue = currentValue + delta;
-      if (nextValue < stat.min) {
-        nextValue = stat.min;
-      }
-      if (nextValue > stat.max) {
-        nextValue = stat.max;
-      }
-      el.textContent = nextValue;
     });
 
     document.querySelectorAll("[data-updated]").forEach((el) => {
-      el.textContent = `Updated ${timeLabel}`;
+      el.textContent = `Updated ${payload.updated}`;
     });
+  }
+
+  function addLogEntry(listEl, entry) {
+    if (!listEl || !entry) {
+      return;
+    }
+    const item = document.createElement("li");
+    const typeClass = entry.type ? ` ${entry.type}` : "";
+    item.className = `log-item${typeClass}`;
+    item.innerHTML = `
+      <div class="log-meta">
+        <span>${entry.time}</span>
+        <span>${entry.source}</span>
+      </div>
+      <strong>${entry.title}</strong>
+      <span class="muted">${entry.detail}</span>
+    `;
+    listEl.prepend(item);
+    while (listEl.children.length > 6) {
+      listEl.removeChild(listEl.lastElementChild);
+    }
+  }
+
+  function formatTime() {
+    return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function addSecurityLog(event) {
+    addLogEntry(securityLogEl, {
+      ...event,
+      time: formatTime(),
+      source: "WebSocket"
+    });
+  }
+
+  function addAuthLog(message, type = "success") {
+    addLogEntry(authLogEl, {
+      title: "3FA Gateway",
+      detail: message,
+      type,
+      time: formatTime(),
+      source: "Auth Service"
+    });
+  }
+
+  function createMockSocket() {
+    const target = new EventTarget();
+    const statState = {};
+    statTargets.forEach((stat) => {
+      const currentValue = Number.parseInt(document.getElementById(stat.id)?.textContent, 10);
+      statState[stat.id] = Number.isNaN(currentValue) ? stat.min : currentValue;
+    });
+
+    const timer = window.setInterval(() => {
+      const timeLabel = formatTime();
+      const stats = {};
+      statTargets.forEach((stat) => {
+        const delta = Math.floor(Math.random() * (stat.jitter * 2 + 1)) - stat.jitter;
+        let nextValue = statState[stat.id] + delta;
+        if (nextValue < stat.min) {
+          nextValue = stat.min;
+        }
+        if (nextValue > stat.max) {
+          nextValue = stat.max;
+        }
+        statState[stat.id] = nextValue;
+        stats[stat.id] = nextValue;
+      });
+
+      target.dispatchEvent(
+        new MessageEvent("message", {
+          data: JSON.stringify({
+            type: "stats",
+            payload: { stats, updated: timeLabel }
+          })
+        })
+      );
+
+      if (Math.random() > 0.35) {
+        const event = securityEvents[Math.floor(Math.random() * securityEvents.length)];
+        target.dispatchEvent(
+          new MessageEvent("message", {
+            data: JSON.stringify({ type: "security", payload: event })
+          })
+        );
+      }
+    }, 3500);
+
+    return {
+      addEventListener: (...args) => target.addEventListener(...args),
+      close: () => window.clearInterval(timer)
+    };
   }
 
   async function copyPrompt() {
@@ -336,6 +457,21 @@ document.addEventListener("DOMContentLoaded", () => {
   setPortal("hr");
   updateLoginStatus();
   generateIdentity();
-  updateStats();
-  window.setInterval(updateStats, 3500);
+  addAuthLog("Auth gateway online. Awaiting 3FA verification.", "success");
+  addSecurityLog({
+    title: "Secure stream connected",
+    detail: "Live telemetry subscribed to /ws/security.",
+    type: "success"
+  });
+
+  const mockSocket = createMockSocket();
+  mockSocket.addEventListener("message", (event) => {
+    const data = JSON.parse(event.data);
+    if (data.type === "stats") {
+      applyStatPayload(data.payload);
+    }
+    if (data.type === "security") {
+      addSecurityLog(data.payload);
+    }
+  });
 });

@@ -10,6 +10,7 @@ flows described in the specification.
 - Centered topbar search, notification pulse, and user dropdown
 - Persistent light/dark theme toggle (localStorage)
 - Live updating dashboard stats (simulated WebSocket updates)
+- Live security stream + 3FA audit trail
 - 3-Factor Authentication demo with 3-strike lockout and IT unlock
 - System-generated identity preview (LAA-XXXX + @ria.gov.lr)
 - RBAC portal switcher with department-specific navigation

@@ -756,6 +756,52 @@ body {
   color: var(--muted);
 }
 
+.accent-text {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.log-list {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.log-item {
+  background: var(--glass-strong);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.log-item .log-meta {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.log-item.success {
+  border-left-color: var(--success);
+}
+
+.log-item.warning {
+  border-left-color: var(--warning);
+}
+
+.log-item.danger {
+  border-left-color: var(--danger);
+}
+
 .portal-grid {
   margin-top: 16px;
   display: grid;
